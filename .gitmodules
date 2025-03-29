@@ -1,0 +1,3 @@
+[submodule "external/roms"]
+	path = external/roms
+	url = https://github.com/dmatlack/chip8.git
