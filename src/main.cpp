@@ -1,8 +1,10 @@
-#include "brilliant_chip8/greeter.hpp"
+#include "brilliant_chip8/BrilliantChip8.hpp"
+
 
 int main()
 {
-    Greeter greeter("World");
-    greeter.say_hello();
+
+    Chip8 chip8;
+
     return 0;
 }
