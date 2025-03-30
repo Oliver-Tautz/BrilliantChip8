@@ -5,8 +5,10 @@
 
 Chip8::Chip8()
 {
+    this->executor = OpCodeExecutor(*this);
     initialize();
 }
+
 void Chip8::initialize()
 {
 
@@ -66,11 +68,6 @@ bool Chip8::loadROM(const fs::path &filepath)
     }
 
     return true;
-}
-
-void Chip8::wrongOpcode()
-{
-    std::cerr << "Unknown opcode: " << std::hex << this->opcode << std::endl;
 }
 
 void Chip8::emulateCycle()

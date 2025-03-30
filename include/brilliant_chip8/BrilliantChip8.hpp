@@ -6,10 +6,15 @@
 #include <array>
 #include <filesystem>
 
+#include "include/brilliant_chip8/OpCodeExecutor.hpp"
+
 namespace fs = std::filesystem;
 
 class Chip8
 {
+
+    friend class OpCodeExecutor;
+
 public:
     Chip8();
     void initialize();
@@ -75,15 +80,8 @@ private:
     // Fontset (loaded into memory at 0x000–0x050)
     void loadFontset();
     void clearScreen();
-    void wrongOpcode();
-    void returnFromSubroutine();
-    void jumpToAddress(uint16_t address);
-    void executeSubroutine(uint16_t address);
-    void skipIfVX(uint8_t x, uint8_t nn);
-    void skipIfVXNot(uint8_t x, uint8_t nn);
-    void skipIfVXEqualsVY(uint8_t x, uint8_t y);
 
-
+    OpCodeExecutor executor;
 };
 
 #endif // CHIP8_H
