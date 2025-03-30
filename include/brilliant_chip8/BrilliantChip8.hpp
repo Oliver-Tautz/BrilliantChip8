@@ -4,46 +4,31 @@
 #include <cstdint>
 #include <string>
 #include <array>
+#include <filesystem>
 
-
+namespace fs = std::filesystem;
 
 class Chip8
 {
 public:
     Chip8();
-    void Initialize();
-    bool LoadROM(const std::string &filename);
-    void EmulateCycle();
+    void initialize();
+    bool loadROM(const fs::path &filepath);
+    void emulateCycle();
 
     // Accessors for display and input
-    const uint8_t *GetDisplay() const;
-    void SetKey(uint8_t key, bool pressed);
+    const uint8_t *getDisplay() const;
+    void setKey(uint8_t key, bool pressed);
 
 private:
-    // Memory and registers
-    std::array<uint8_t, 4096> memory;
-    std::array<uint8_t, 16> V;           // General purpose registers V0–VF
-    uint16_t I;                          // Index register
-    uint16_t programCounter;             // Program counter
+    // Constants
+    inline static constexpr std::size_t CONST_MEMORY_SIZE = 4096;
+    inline static constexpr std::size_t CONST_STACK_SIZE = 16;
+    inline static constexpr std::size_t CONST_NUMBER_OF_REGISTERS = 16;
+    inline static constexpr std::size_t CONST_NUMBER_OF_KEYS = 16;
 
-    // Stack
-    std::array<uint16_t, 16> stack;
-    uint8_t sp;                          // Stack pointer
-
-    // Timers
-    uint8_t delay_timer;
-    uint8_t sound_timer;
-
-    // Input and display
-    std::array<std::array<uint8_t, 64>, 32> gfx;   // Monochrome display (on/off pixels)
-    std::array<uint8_t, 16> key;                   // Keypad state (0 = released, 1 = pressed)
-
-    // Current opcode
-    uint16_t opcode;
-
-    // Fontset (loaded into memory at 0x000–0x050)
-    void LoadFontset();
-    bool drawFlag;
+    inline static constexpr std::size_t CONST_DISPLAY_SIZE_X = 64;
+    inline static constexpr std::size_t CONST_DISPLAY_SIZE_Y = 32;
 
     inline static constexpr std::array<uint8_t, 80> CONST_FONTSET = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -63,6 +48,40 @@ private:
         0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
         0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
+
+    // Memory and registers
+    std::array<uint8_t, CONST_MEMORY_SIZE> memory;
+    std::array<uint8_t, CONST_NUMBER_OF_REGISTERS> V_general_purpose_register; // General purpose registers V0–VF
+    uint16_t index_register_I;                                                 // Index register
+    uint16_t program_counter;                                                  // Program counter
+
+    // Stack
+    std::array<uint16_t, CONST_NUMBER_OF_KEYS> stack;
+    uint8_t stack_pointer; // Stack pointer
+
+    // Timers
+    uint8_t delay_timer;
+    uint8_t sound_timer;
+
+    // Input and display
+    std::array<std::array<uint8_t, CONST_DISPLAY_SIZE_X>, CONST_DISPLAY_SIZE_Y> gfx; // Monochrome display (on/off pixels)
+    std::array<uint8_t, CONST_STACK_SIZE> key;                                       // Keypad state (0 = released, 1 = pressed)
+
+    // Current opcode
+    uint16_t opcode;
+
+    bool draw_flag;
+
+    // Fontset (loaded into memory at 0x000–0x050)
+    void loadFontset();
+    void clearScreen();
+    void wrongOpcode();
+    void returnFromSubroutine();
+    void jumpToAddress(uint16_t address);
+    void executeSubroutine(uint16_t address);
+    void skipIfVX(uint8_t x, uint8_t nn);
+    void skipIfVXNot(uint8_t x, uint8_t nn);
+    void skipIfVXEqualsVY(uint8_t x, uint8_t y);
 
 
 };
