@@ -9,11 +9,19 @@ message(STATUS "C++ Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "C++ Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 
-# Include headers
-include_directories(include)
+
+
 
 # Source files
 add_executable(brilliant_chip8
     src/main.cpp
     src/BrilliantChip8.cpp
+    src/OpCodeExecutor.cpp
+    src/OpCodes.cpp
+    src/Renderer.cpp
 )
+
+# Include headers
+#include_directories(include)
+# this is more modular and minimizes include problems
+target_include_directories(brilliant_chip8 PRIVATE include)

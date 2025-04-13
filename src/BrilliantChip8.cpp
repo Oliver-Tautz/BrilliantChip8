@@ -1,7 +1,10 @@
 
-#include "brilliant_chip8/BrilliantChip8.hpp"
+// #include "brilliant_chip8/BrilliantChip8.hpp"
+//  #include "brilliant_chip8/OpCodeExecutor.hpp"
+
 #include <fstream>
 #include <iostream>
+#include "brilliant_chip8/BrilliantChip8.hpp"
 
 Chip8::Chip8() : executor(*this)
 {
@@ -67,6 +70,16 @@ bool Chip8::loadROM(const fs::path &filepath)
     }
 
     return true;
+}
+
+const Chip8::DisplayBuffer &Chip8::getDisplay() const
+{
+    return this->gfx;
+}
+
+uint8_t Chip8::getDrawFlag() const
+{
+    return this->draw_flag;
 }
 
 void Chip8::emulateCycle()

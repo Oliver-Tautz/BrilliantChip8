@@ -6,7 +6,7 @@
 #include <array>
 #include <filesystem>
 
-#include "include/brilliant_chip8/OpCodeExecutor.hpp"
+#include "brilliant_chip8/OpCodeExecutor.hpp"
 
 namespace fs = std::filesystem;
 
@@ -16,24 +16,28 @@ class Chip8
     friend class OpCodeExecutor;
 
 public:
+    inline static constexpr std::size_t CONST_DISPLAY_SIZE_X = 64;
+    inline static constexpr std::size_t CONST_DISPLAY_SIZE_Y = 32;
+    inline static constexpr std::size_t CONST_NUMBER_OF_KEYS = 16;
+
+    using DisplayBuffer = std::array<std::array<uint8_t, CONST_DISPLAY_SIZE_X>, CONST_DISPLAY_SIZE_Y>;
+
     Chip8();
     void initialize();
     bool loadROM(const fs::path &filepath);
     void emulateCycle();
 
     // Accessors for display and input
-    const uint8_t *getDisplay() const;
+    const DisplayBuffer &getDisplay() const;
     void setKey(uint8_t key, bool pressed);
+
+    uint8_t getDrawFlag() const;
 
 private:
     // Constants
     inline static constexpr std::size_t CONST_MEMORY_SIZE = 4096;
     inline static constexpr std::size_t CONST_STACK_SIZE = 16;
     inline static constexpr std::size_t CONST_NUMBER_OF_REGISTERS = 16;
-    inline static constexpr std::size_t CONST_NUMBER_OF_KEYS = 16;
-
-    inline static constexpr std::size_t CONST_DISPLAY_SIZE_X = 64;
-    inline static constexpr std::size_t CONST_DISPLAY_SIZE_Y = 32;
 
     inline static constexpr std::array<uint8_t, 80> CONST_FONTSET = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -69,8 +73,8 @@ private:
     uint8_t sound_timer;
 
     // Input and display
-    std::array<std::array<uint8_t, CONST_DISPLAY_SIZE_X>, CONST_DISPLAY_SIZE_Y> gfx; // Monochrome display (on/off pixels)
-    std::array<uint8_t, CONST_STACK_SIZE> key;                                       // Keypad state (0 = released, 1 = pressed)
+    DisplayBuffer gfx;                         // Monochrome display (on/off pixels)
+    std::array<uint8_t, CONST_STACK_SIZE> key; // Keypad state (0 = released, 1 = pressed)
 
     // Current opcode
     uint16_t opcode;
