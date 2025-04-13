@@ -8,7 +8,7 @@ Renderer::Renderer()
     std::cout << "Renderer initialized.\n";
 }
 
-void Renderer::render(Chip8::DisplayBuffer &)
+void Renderer::render(BrilliantChip8::DisplayBuffer &)
 {
     // For now, just a placeholder
     std::cout << "Rendering screen...\n";

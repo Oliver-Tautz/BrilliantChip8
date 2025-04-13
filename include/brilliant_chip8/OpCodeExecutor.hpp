@@ -3,19 +3,19 @@
 
 #include <cstdint>
 // #include "brilliant_chip8/BrilliantChip8.hpp"
-class Chip8;
+class BrilliantChip8;
 
 class OpCodeExecutor
 {
 
 public:
-    OpCodeExecutor(Chip8 &chipRef);
+    OpCodeExecutor(BrilliantChip8 &chipRef);
 
     void execute(uint16_t opcode);
 
 private:
     // Chip8 with loaded program
-    Chip8 *chip_ref;
+    BrilliantChip8 *chip_ref;
 
     // Decoded instruction fields
     uint16_t current_opcode;

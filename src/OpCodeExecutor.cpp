@@ -3,7 +3,7 @@
 #include "brilliant_chip8/OpCodeExecutor.hpp"
 #include "brilliant_chip8/BrilliantChip8.hpp"
 
-OpCodeExecutor::OpCodeExecutor(Chip8 &chipRef)
+OpCodeExecutor::OpCodeExecutor(BrilliantChip8 &chipRef)
 {
     this->chip_ref = &chipRef;
 }

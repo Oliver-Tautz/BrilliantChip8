@@ -6,44 +6,40 @@
 #include <iostream>
 #include "brilliant_chip8/BrilliantChip8.hpp"
 
-Chip8::Chip8() : executor(*this)
+BrilliantChip8::BrilliantChip8() : executor(*this)
 {
-    initialize();
+    this->initialize();
 }
 
-void Chip8::initialize()
+void BrilliantChip8::initialize()
 {
 
     this->draw_flag = false;
 
     this->program_counter = 0x200;
-    this->index_register_I = 0;
+    this->I = 0;
     this->stack_pointer = 0;
     this->opcode = 0;
 
     this->delay_timer = 0;
     this->sound_timer = 0;
 
-    std::fill(this->V_general_purpose_register.begin(), this->V_general_purpose_register.end(), 0);
+    std::fill(this->V.begin(), this->V.end(), 0);
     std::fill(this->memory.begin(), this->memory.end(), 0);
     std::fill(this->stack.begin(), this->stack.end(), 0);
     std::fill(this->key.begin(), this->key.end(), 0);
 
-    for (std::array<uint8_t, 64> &row : gfx)
-    {
-        std::fill(row.begin(), row.end(), 0);
-    }
-
+    this->clearScreen();
     this->loadFontset();
 };
 
-void Chip8::loadFontset()
+void BrilliantChip8::loadFontset()
 {
 
     std::copy(this->CONST_FONTSET.begin(), this->CONST_FONTSET.end(), this->memory.begin() + 0x50);
 }
 
-bool Chip8::loadROM(const fs::path &filepath)
+bool BrilliantChip8::loadROM(const fs::path &filepath)
 {
 
     std::ifstream file(filepath, std::ios::binary | std::ios::ate); // ate = start at end
@@ -72,24 +68,74 @@ bool Chip8::loadROM(const fs::path &filepath)
     return true;
 }
 
-const Chip8::DisplayBuffer &Chip8::getDisplay() const
+bool BrilliantChip8::loadROM(const std::vector<uint8_t> &romData)
+{
+    if (romData.size() + 0x200 > sizeof(memory))
+        return false; // too large
+
+    for (size_t i = 0; i < romData.size(); ++i)
+    {
+        memory[0x200 + i] = romData[i];
+    }
+    return true;
+}
+
+const BrilliantChip8::DisplayBuffer &BrilliantChip8::getDisplay() const
 {
     return this->gfx;
 }
 
-uint8_t Chip8::getDrawFlag() const
+uint8_t BrilliantChip8::getDrawFlag() const
 {
     return this->draw_flag;
 }
 
-void Chip8::emulateCycle()
+void BrilliantChip8::resetDrawFlag()
+{
+    this->draw_flag = 0;
+}
+
+void BrilliantChip8::updateTimers()
+{
+    if (this->delay_timer > 0)
+        --this->delay_timer;
+    if (this->sound_timer > 0)
+        --this->sound_timer;
+}
+
+void BrilliantChip8::emulateCycle()
 {
     // 1. Fetch
     this->opcode = (memory[program_counter] << 8) | memory[program_counter + 1];
     this->program_counter += 2;
 
-    // 3. Execute
+    // 2. Execute
     this->executor.execute(opcode);
+}
 
-    // 4. Update timers
+void BrilliantChip8::clearScreen()
+{
+    for (auto &row : this->gfx)
+        std::fill(row.begin(), row.end(), 0);
+
+    this->draw_flag = true;
+}
+
+BrilliantChip8::Chip8StateSnapshot BrilliantChip8::getStateSnapshot() const
+{
+    Chip8StateSnapshot snapshot;
+
+    snapshot.program_counter = this->program_counter;
+    snapshot.opcode = this->opcode;
+    snapshot.I = this->I;
+    snapshot.stack_pointer = this->stack_pointer;
+    snapshot.delay_timer = this->delay_timer;
+    snapshot.sound_timer = this->sound_timer;
+    snapshot.V = this->V;
+    snapshot.stack = this->stack;
+    snapshot.key = this->key;
+    snapshot.display = this->gfx;
+    snapshot.draw_flag = this->draw_flag;
+
+    return snapshot;
 }

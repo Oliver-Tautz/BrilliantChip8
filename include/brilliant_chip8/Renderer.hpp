@@ -7,7 +7,7 @@ class Renderer
 {
 public:
     Renderer(); // Constructor
-    void render(Chip8::DisplayBuffer &);
+    void render(BrilliantChip8::DisplayBuffer &);
 };
 
 #endif // RENDERER_HPP

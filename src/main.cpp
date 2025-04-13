@@ -6,12 +6,12 @@
 int main()
 {
 
-    Chip8 chip8;
+    BrilliantChip8 chip8;
     chip8.initialize();
 
     chip8.loadROM(std::filesystem::path("external/roms/roms/demos") / "Maze (alt) [David Winter, 199x].ch8");
 
-    Chip8::DisplayBuffer display = chip8.getDisplay();
+    BrilliantChip8::DisplayBuffer display = chip8.getDisplay();
 
     Renderer renderer = Renderer();
 
@@ -22,6 +22,6 @@ int main()
         {
             renderer.render(display);
         }
-        return 0;
+        // return 0;
     }
 }
