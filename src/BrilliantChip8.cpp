@@ -16,7 +16,7 @@ void BrilliantChip8::initialize()
 
     this->draw_flag = false;
 
-    this->program_counter = 0x200;
+    this->program_counter = this->CONST_PROGRAM_START;
     this->I = 0;
     this->stack_pointer = 0;
     this->opcode = 0;
@@ -36,7 +36,7 @@ void BrilliantChip8::initialize()
 void BrilliantChip8::loadFontset()
 {
 
-    std::copy(this->CONST_FONTSET.begin(), this->CONST_FONTSET.end(), this->memory.begin() + 0x50);
+    std::copy(this->CONST_FONTSET.begin(), this->CONST_FONTSET.end(), this->memory.begin() + this->CONST_SPRITE_START);
 }
 
 bool BrilliantChip8::loadROM(const fs::path &filepath)
@@ -50,14 +50,14 @@ bool BrilliantChip8::loadROM(const fs::path &filepath)
     }
 
     std::streamsize size = file.tellg(); // get file size
-    if (size > (4096 - 0x200))
+    if (size > (4096 - this->CONST_PROGRAM_START))
     {
         std::cerr << "ROM too large to fit in memory!\n";
         return false;
     }
 
     file.seekg(0, std::ios::beg); // rewind to beginning
-    file.read(reinterpret_cast<char *>(&memory[0x200]), size);
+    file.read(reinterpret_cast<char *>(&memory[this->CONST_PROGRAM_START]), size);
 
     if (!file)
     {
@@ -70,12 +70,12 @@ bool BrilliantChip8::loadROM(const fs::path &filepath)
 
 bool BrilliantChip8::loadROM(const std::vector<uint8_t> &romData)
 {
-    if (romData.size() + 0x200 > sizeof(memory))
+    if (romData.size() + this->CONST_PROGRAM_START > sizeof(memory))
         return false; // too large
 
     for (size_t i = 0; i < romData.size(); ++i)
     {
-        memory[0x200 + i] = romData[i];
+        memory[this->CONST_PROGRAM_START + i] = romData[i];
     }
     return true;
 }
@@ -105,11 +105,16 @@ void BrilliantChip8::updateTimers()
 
 void BrilliantChip8::emulateCycle()
 {
+
+    // TODO maybe find a better way to handle this ...
+
     // 1. Fetch
     this->opcode = (memory[program_counter] << 8) | memory[program_counter + 1];
+
+    // 2. Advance PC
     this->program_counter += 2;
 
-    // 2. Execute
+    // 3. Execute
     this->executor.execute(opcode);
 }
 
@@ -138,4 +143,9 @@ BrilliantChip8::Chip8StateSnapshot BrilliantChip8::getStateSnapshot() const
     snapshot.draw_flag = this->draw_flag;
 
     return snapshot;
+}
+
+void BrilliantChip8::skipNextInstruction()
+{
+    this->program_counter += 2;
 }

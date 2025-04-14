@@ -3,6 +3,8 @@
 #include "brilliant_chip8/OpCodeExecutor.hpp"
 #include "brilliant_chip8/BrilliantChip8.hpp"
 #include <array>
+#include <iostream>
+#include <algorithm>
 
 #define CHIP this->chip_ref
 #define GET_VX_VY            \
@@ -41,14 +43,14 @@ void OpCodeExecutor::OPCODE_3XNN_SkipIfVXEqualsNN(uint8_t x, uint8_t nn)
 
     if (CHIP->V[x] == nn)
     {
-        CHIP->program_counter += 2;
+        CHIP->skipNextInstruction();
     }
 }
 void OpCodeExecutor::OPCODE_4XNN_SkipIfVXNotEqualsNN(uint8_t x, uint8_t nn)
 {
     if (!CHIP->V[x] == nn)
     {
-        CHIP->program_counter += 2;
+        CHIP->skipNextInstruction();
     }
 }
 void OpCodeExecutor::OPCODE_5XY0_SkipIfVXEqualsVY(uint8_t x, uint8_t y)
@@ -56,7 +58,7 @@ void OpCodeExecutor::OPCODE_5XY0_SkipIfVXEqualsVY(uint8_t x, uint8_t y)
 
     if (CHIP->V[x] == CHIP->V[y])
     {
-        CHIP->program_counter += 2;
+        CHIP->skipNextInstruction();
     }
 }
 
@@ -149,7 +151,7 @@ void OpCodeExecutor::OPCODE_9XY0_SkipIfVXNotEqualsVY(uint8_t x, uint8_t y)
 
     if (vx != vy)
     {
-        CHIP->program_counter += 2;
+        CHIP->skipNextInstruction();
     }
 }
 void OpCodeExecutor::OPCODE_ANNN_StoreNNNInI(uint16_t nnn)
@@ -203,14 +205,102 @@ void OpCodeExecutor::OPCODE_DXYN_DrawSprite(uint8_t x, uint8_t y, uint8_t n)
 
 void OpCodeExecutor::OPCODE_EX9E_SkipIfVXPressed(uint8_t x)
 {
+
+    uint8_t vx = CHIP->V[x];
+
+    if (vx < 16)
+    {
+
+        if (CHIP->key[vx])
+        {
+
+            CHIP->skipNextInstruction();
+        }
+    }
+    else
+    {
+        std::cerr << "Warning: Invalid key index in OPCODE_EX9E: " << static_cast<int>(vx) << std::endl;
+    }
 }
-void OpCodeExecutor::OPCODE_EXA1_SkipIfVXNotPressed(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX07_StoreDelayInVX(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX0A_WaitForKeyStoreVX(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX15_SetDelayWithVX(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX18_SetSoundTimerWithVX(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX1E_AddVXToI(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX29_SetSpriteDataVXToI(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX33_StoreBinaryVXI(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX55_StoreV(uint8_t x) {}
-void OpCodeExecutor::OPCODE_FX65_FillV(uint8_t x) {}
+void OpCodeExecutor::OPCODE_EXA1_SkipIfVXNotPressed(uint8_t x)
+{
+
+    uint8_t vx = CHIP->V[x];
+
+    if (vx < 16)
+    {
+
+        if (!CHIP->key[vx])
+        {
+            CHIP->skipNextInstruction();
+        }
+    }
+    else
+    {
+        std::cerr << "Warning: Invalid key index in OPCODE_EX9E: " << static_cast<int>(vx) << std::endl;
+    }
+}
+void OpCodeExecutor::OPCODE_FX07_StoreDelayInVX(uint8_t x)
+{
+
+    CHIP->V[x] = CHIP->delay_timer;
+}
+void OpCodeExecutor::OPCODE_FX0A_WaitForKeyStoreVX(uint8_t x)
+{
+
+    // If a key is pressed go on with the Program.
+    for (uint8_t i = 0; i < CHIP->CONST_NUMBER_OF_KEYS; ++i)
+    {
+        if (CHIP->key[i])
+        {
+            CHIP->V[x] = i;
+            return;
+        }
+    }
+    // Stall otherwise
+    CHIP->program_counter -= 2;
+}
+void OpCodeExecutor::OPCODE_FX15_SetDelayWithVX(uint8_t x)
+{
+    CHIP->delay_timer = CHIP->V[x];
+}
+
+void OpCodeExecutor::OPCODE_FX18_SetSoundTimerWithVX(uint8_t x)
+{
+    CHIP->sound_timer = CHIP->V[x];
+}
+void OpCodeExecutor::OPCODE_FX1E_AddVXToI(uint8_t x)
+{
+    CHIP->I += CHIP->V[x];
+}
+void OpCodeExecutor::OPCODE_FX29_SetSpriteDataVXToI(uint8_t x)
+{
+    uint8_t digit = CHIP->V[x];
+
+    // Each digit sprite is 5 bytes long, and fontset starts at 0x050
+    CHIP->I = CHIP->CONST_SPRITE_START + (digit * 5);
+}
+void OpCodeExecutor::OPCODE_FX33_StoreBinaryVXI(uint8_t x)
+{
+    uint8_t vx = CHIP->V[x];
+
+    uint8_t ones = (vx % 10);
+    uint8_t tens = (vx / 10) % 10;
+    uint8_t hundreds = vx / 100;
+
+    CHIP->memory[CHIP->I] = ones;
+    CHIP->memory[CHIP->I + 1] = tens;
+    CHIP->memory[CHIP->I + 2] = hundreds;
+}
+void OpCodeExecutor::OPCODE_FX55_StoreV(uint8_t x)
+{
+
+    std::copy_n(CHIP->V.begin(), x + 1, CHIP->memory.begin() + CHIP->I);
+    CHIP->I += x + 1;
+}
+void OpCodeExecutor::OPCODE_FX65_FillV(uint8_t x)
+{
+
+    std::copy_n(CHIP->memory.begin() + CHIP->I, x + 1, CHIP->V.begin());
+    CHIP->I += x + 1;
+}
