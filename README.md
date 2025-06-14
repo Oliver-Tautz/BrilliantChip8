@@ -9,16 +9,16 @@ A Chip8 interpeter written in C++
 # TODO
 
 use logging library instead of stdout, stderr etc?
-v
+
 
 # DevDocs
 
 Install Pakackes:
-vcpkg install --x-install-root=./vcpkg-installed^
+vcpkg install --x-install-root=./vcpkg-installed
 
 Build:  
-cmake --preset=default
+cmake --preset=default && cmake --build --preset=default
 
 
 or faster with ninja
-cmake --preset=default-ninja
+cmake --preset=default-ninja && cmake --build --preset=default-ninja

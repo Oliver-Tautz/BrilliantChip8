@@ -5,6 +5,8 @@
 #include <array>
 #include <iostream>
 #include <algorithm>
+#include <random>
+#include <spdlog/spdlog.h>
 
 #define CHIP this->chip_ref
 #define GET_VX_VY            \
@@ -46,6 +48,7 @@ void OpCodeExecutor::OPCODE_3XNN_SkipIfVXEqualsNN(uint8_t x, uint8_t nn)
         CHIP->skipNextInstruction();
     }
 }
+
 void OpCodeExecutor::OPCODE_4XNN_SkipIfVXNotEqualsNN(uint8_t x, uint8_t nn)
 {
     if (!CHIP->V[x] == nn)
@@ -156,8 +159,8 @@ void OpCodeExecutor::OPCODE_9XY0_SkipIfVXNotEqualsVY(uint8_t x, uint8_t y)
 }
 void OpCodeExecutor::OPCODE_ANNN_StoreNNNInI(uint16_t nnn)
 {
-
     CHIP->I = nnn;
+    spdlog::info("Set I to {:#04x} using opcode ANNN", nnn);
 }
 void OpCodeExecutor::OPCODE_BNNN_JumpToAddressNNPlusV0(uint16_t nnn)
 {
@@ -166,7 +169,11 @@ void OpCodeExecutor::OPCODE_BNNN_JumpToAddressNNPlusV0(uint16_t nnn)
 }
 void OpCodeExecutor::OPCODE_CXNN_SetVXRandomNN(uint8_t x, uint8_t nn)
 {
-    CHIP->V[x] = rand() & nn;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, 255);
+    CHIP->V[x] = dist(gen) & nn;
 }
 
 void OpCodeExecutor::OPCODE_DXYN_DrawSprite(uint8_t x, uint8_t y, uint8_t n)
@@ -192,15 +199,16 @@ void OpCodeExecutor::OPCODE_DXYN_DrawSprite(uint8_t x, uint8_t y, uint8_t n)
             // Index into display buffer (assuming 2D array: gfx[64][32])
             if (pixel == 1)
             {
-                if (CHIP->gfx[screen_x][screen_y] == 1)
+                if (CHIP->gfx[screen_y][screen_x] == 1)
                 {
                     CHIP->V[0xF] = 1; // Collision detected
                 }
 
-                CHIP->gfx[screen_x][screen_y] ^= 1;
+                CHIP->gfx[screen_y][screen_x] ^= 1;
             }
         }
     }
+    CHIP->draw_flag = true; // Set draw flag to indicate screen update
 }
 
 void OpCodeExecutor::OPCODE_EX9E_SkipIfVXPressed(uint8_t x)

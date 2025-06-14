@@ -1,5 +1,6 @@
 
 #include "brilliant_chip8/BrilliantChip8.hpp"
+#include "brilliant_chip8/Renderer.hpp"
 #include <gtest/gtest.h>
 
 class BrilliantChip8OpcodeStepTest : public ::testing::Test
@@ -54,7 +55,7 @@ TEST_F(BrilliantChip8OpcodeStepTest, ExecutesWithSubroutineAndDrawsFont)
     // Step 0: CALL 0x20C
     chip.emulateCycle();
     auto s0 = chip.getStateSnapshot();
-    EXPECT_EQ(s0.stack_pointer, 0); // (stack managed internally)
+    EXPECT_EQ(s0.stack_pointer, 1); // (stack managed internally)
     EXPECT_EQ(s0.program_counter, 0x20C);
 
     // Step 1: LD V0, 5
@@ -82,6 +83,10 @@ TEST_F(BrilliantChip8OpcodeStepTest, ExecutesWithSubroutineAndDrawsFont)
     for (int row = 0; row < 5; ++row)
         for (int col = 0; col < BrilliantChip8::CONST_DISPLAY_SIZE_X; ++col)
             pixelsOn += display[row][col];
+
+    Renderer renderer = Renderer();
+    BrilliantChip8::DisplayBuffer display2 = chip.getDisplay();
+    renderer.render(display2); // Render to console for visual check
 
     EXPECT_GT(pixelsOn, 0) << "Expected some pixels to be drawn";
 

@@ -8,8 +8,18 @@ Renderer::Renderer()
     std::cout << "Renderer initialized.\n";
 }
 
-void Renderer::render(BrilliantChip8::DisplayBuffer &)
+void Renderer::render(BrilliantChip8::DisplayBuffer &display)
 {
-    // For now, just a placeholder
-    std::cout << "Rendering screen...\n";
+    std::cout << "\033[H"; // ANSI escape code: move cursor to top-left
+
+    for (const auto &row : display)
+    {
+        for (const auto &pixel : row)
+        {
+            std::cout << (pixel ? "█" : "x");
+        }
+        std::cout << '\n';
+    }
+
+    std::cout << std::flush;
 }

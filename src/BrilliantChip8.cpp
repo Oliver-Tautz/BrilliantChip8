@@ -14,7 +14,7 @@ BrilliantChip8::BrilliantChip8() : executor(*this)
 
 void BrilliantChip8::initialize()
 {
-
+    spdlog::info("Initializing BrilliantChip8.");
     this->draw_flag = false;
 
     this->program_counter = this->CONST_PROGRAM_START;
@@ -43,6 +43,8 @@ void BrilliantChip8::loadFontset()
 bool BrilliantChip8::loadROM(const fs::path &filepath)
 {
 
+    spdlog::info("Loading ROM from path: {}", filepath.string());
+
     std::ifstream file(filepath, std::ios::binary | std::ios::ate); // ate = start at end
     if (!file.is_open())
     {
@@ -56,9 +58,12 @@ bool BrilliantChip8::loadROM(const fs::path &filepath)
         std::cerr << "ROM too large to fit in memory!\n";
         return false;
     }
-
+    spdlog::info("Found {} bytes.", size);
     file.seekg(0, std::ios::beg); // rewind to beginning
+    spdlog::info("Memory before load: {:X} {:X} {:X}", memory[0x200], memory[0x201], memory[0x202]);
+
     file.read(reinterpret_cast<char *>(&memory[this->CONST_PROGRAM_START]), size);
+    spdlog::info("Memory after load: {:X} {:X} {:X}", memory[0x200], memory[0x201], memory[0x202]);
 
     if (!file)
     {
@@ -111,12 +116,14 @@ void BrilliantChip8::emulateCycle()
 
     // 1. Fetch
     this->opcode = (memory[program_counter] << 8) | memory[program_counter + 1];
+    spdlog::info("Fetched opcode from address 0x{:03x}: {:04x}", this->program_counter, this->opcode);
 
     // 2. Advance PC
     this->program_counter += 2;
 
     // 3. Execute
     this->executor.execute(opcode);
+    spdlog::info("Executed opcode.");
 }
 
 void BrilliantChip8::clearScreen()
