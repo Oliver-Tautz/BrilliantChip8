@@ -23,7 +23,7 @@ public:
     inline static constexpr std::size_t CONST_DISPLAY_SIZE_X = 64;
     inline static constexpr std::size_t CONST_DISPLAY_SIZE_Y = 32;
     inline static constexpr std::size_t CONST_NUMBER_OF_KEYS = 16;
-    inline static constexpr uint8_t CONST_PROGRAM_START = 0x200;
+    inline static constexpr uint16_t CONST_PROGRAM_START = 0x200;
     inline static constexpr uint8_t CONST_SPRITE_START = 0x50;
 
     using DisplayBuffer = std::array<std::array<uint8_t, CONST_DISPLAY_SIZE_X>, CONST_DISPLAY_SIZE_Y>;

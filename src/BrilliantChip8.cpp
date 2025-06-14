@@ -1,10 +1,11 @@
 
 // #include "brilliant_chip8/BrilliantChip8.hpp"
-//  #include "brilliant_chip8/OpCodeExecutor.hpp"
+// #include "brilliant_chip8/OpCodeExecutor.hpp"
 
 #include <fstream>
 #include <iostream>
 #include "brilliant_chip8/BrilliantChip8.hpp"
+#include <spdlog/spdlog.h>
 
 BrilliantChip8::BrilliantChip8() : executor(*this)
 {

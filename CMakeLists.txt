@@ -3,6 +3,8 @@ project(BrilliantChip8)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+find_package(spdlog REQUIRED)
+
 
 message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message(STATUS "C++ Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
@@ -24,6 +26,7 @@ add_executable(brilliant_chip8_main
 )
 
 target_link_libraries(brilliant_chip8_main brilliant_chip8)
+target_link_libraries(brilliant_chip8 PRIVATE spdlog::spdlog)
 
 # ========== Testing Setup ==========
 enable_testing()
@@ -38,11 +41,11 @@ target_include_directories(BrilliantChip8Tests PRIVATE include)
 
 target_compile_definitions(BrilliantChip8Tests PRIVATE UNIT_TEST)
 
+find_package(GTest REQUIRED)
 target_link_libraries(BrilliantChip8Tests
     brilliant_chip8
-    gtest
-    gtest_main
-    pthread
+    GTest::gtest
+    GTest::gtest_main
 )
 
 add_test(NAME AllChip8Tests COMMAND BrilliantChip8Tests)
