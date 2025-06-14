@@ -1,0 +1,10 @@
+#pragma once
+
+#include <fstream>
+#include <string>
+#include "brilliant_chip8/BrilliantChip8.hpp"
+
+void printStreamBytes(std::ifstream &stream, std::size_t maxBytes);
+
+// Convert a snapshot into a readable string
+std::string to_string(const BrilliantChip8::Chip8StateSnapshot &snapshot);
