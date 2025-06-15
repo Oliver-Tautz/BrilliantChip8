@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Find logging and testing libraries
 find_package(spdlog REQUIRED)
 find_package(GTest REQUIRED)
+find_package(cxxopts REQUIRED)
 
 # Print compiler details
 message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")

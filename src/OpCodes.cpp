@@ -51,7 +51,7 @@ void OpCodeExecutor::OPCODE_3XNN_SkipIfVXEqualsNN(uint8_t x, uint8_t nn)
 
 void OpCodeExecutor::OPCODE_4XNN_SkipIfVXNotEqualsNN(uint8_t x, uint8_t nn)
 {
-    if (!CHIP->V[x] == nn)
+    if (!(CHIP->V[x] == nn))
     {
         CHIP->skipNextInstruction();
     }
@@ -208,6 +208,7 @@ void OpCodeExecutor::OPCODE_DXYN_DrawSprite(uint8_t x, uint8_t y, uint8_t n)
             }
         }
     }
+    // TODO Only do this when a picel got changed!
     CHIP->draw_flag = true; // Set draw flag to indicate screen update
 }
 

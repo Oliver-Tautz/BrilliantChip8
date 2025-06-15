@@ -3,6 +3,13 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <thread>
+#include <chrono>
+
+void sleep_ms(unsigned ms)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
 
 void printStreamBytes(std::ifstream &stream, std::size_t maxBytes)
 {
@@ -34,7 +41,7 @@ void printStreamBytes(std::ifstream &stream, std::size_t maxBytes)
     stream.seekg(originalPos);
 }
 
-std::string to_string(const BrilliantChip8::Chip8StateSnapshot &snapshot)
+std::string chip8_snapshot_to_string(const BrilliantChip8::Chip8StateSnapshot &snapshot)
 {
     std::ostringstream oss;
     oss << "=== Chip8 Snapshot ===\n";

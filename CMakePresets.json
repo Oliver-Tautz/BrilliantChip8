@@ -2,7 +2,7 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "default",
+            "name": "default-debug",
             "generator": "Unix Makefiles",
             "binaryDir": "build",
             "cacheVariables": {
@@ -10,11 +10,13 @@
                 "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_MANIFEST_MODE": "ON",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed"
+                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
             }
         },
         {
-            "name": "default-ninja",
+            "name": "default-ninja-debug",
             "generator": "Ninja",
             "binaryDir": "build",
             "cacheVariables": {
@@ -22,7 +24,37 @@
                 "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_MANIFEST_MODE": "ON",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed"
+                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+            }
+        },
+        {
+            "name": "default",
+            "generator": "Unix Makefiles",
+            "binaryDir": "build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_MANIFEST_MODE": "ON",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+            }
+        },
+        {
+            "name": "default-ninja",
+            "generator": "Ninja",
+            "binaryDir": "build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_MANIFEST_MODE": "ON",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
             }
         }
     ],

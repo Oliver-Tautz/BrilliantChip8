@@ -22,3 +22,7 @@ cmake --preset=default && cmake --build --preset=default
 
 or faster with ninja
 cmake --preset=default-ninja && cmake --build --preset=default-ninja
+
+Use Vscode:
+
+Instal CMakeTools Extension. Build, run and debug shoulkd work ootb!
