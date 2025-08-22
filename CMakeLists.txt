@@ -14,6 +14,8 @@ message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message(STATUS "C++ Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "C++ Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
+
+
 # ========== Emulator Core Library ==========
 add_library(brilliant_chip8
     src/BrilliantChip8.cpp
@@ -24,6 +26,12 @@ add_library(brilliant_chip8
 )
 
 target_include_directories(brilliant_chip8 PUBLIC include)
+target_sources(brilliant_chip8
+    PRIVATE
+        src/utils.cpp
+        $<$<BOOL:${WIN32}>:src/utils_win.cpp>
+        $<$<NOT:$<BOOL:${WIN32}>>:src/utils_posix.cpp>
+)
 
 # Link spdlog to core library so it's available to all dependents
 target_link_libraries(brilliant_chip8 PUBLIC spdlog::spdlog)
