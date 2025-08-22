@@ -1,22 +1,20 @@
-#ifndef BRILLIANT_CHIP8_H
-#define BRILLIANT_CHIP8_H
+#pragma once
 
-#include <cstdint>
-#include <string>
 #include <array>
+#include <cstdint>
 #include <filesystem>
+#include <string>
 #include <vector>
 
 #include "brilliant_chip8/OpCodeExecutor.hpp"
 
 namespace fs = std::filesystem;
 
-class BrilliantChip8
-{
+class BrilliantChip8 {
     friend class OpCodeExecutor;
     friend class BrilliantChip8Tests;
 
-public:
+   public:
     inline static constexpr std::size_t CONST_MEMORY_SIZE = 4096;
     inline static constexpr std::size_t CONST_STACK_SIZE = 16;
     inline static constexpr std::size_t CONST_NUMBER_OF_REGISTERS = 16;
@@ -26,10 +24,10 @@ public:
     inline static constexpr uint16_t CONST_PROGRAM_START = 0x200;
     inline static constexpr uint8_t CONST_SPRITE_START = 0x50;
 
-    using DisplayBuffer = std::array<std::array<uint8_t, CONST_DISPLAY_SIZE_X>, CONST_DISPLAY_SIZE_Y>;
+    using DisplayBuffer = std::array<std::array<uint8_t, CONST_DISPLAY_SIZE_X>,
+                                     CONST_DISPLAY_SIZE_Y>;
 
-    struct Chip8StateSnapshot
-    {
+    struct Chip8StateSnapshot {
         uint16_t program_counter;
         uint16_t opcode;
         uint16_t I;
@@ -57,7 +55,7 @@ public:
     void resetDrawFlag();
     void updateTimers();
 
-private:
+   private:
     inline static constexpr std::array<uint8_t, 80> CONST_FONTSET = {
         // 0
         0xF0, 0x90, 0x90, 0x90, 0xF0,
@@ -115,5 +113,3 @@ private:
 
     OpCodeExecutor executor;
 };
-
-#endif // BRILLIANT_CHIP8_H

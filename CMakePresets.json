@@ -2,74 +2,86 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "default-debug",
-            "generator": "Unix Makefiles",
+            "name": "base",
             "binaryDir": "build",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "VCPKG_MANIFEST_MODE": "ON",
+                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            }
+        },
+        {
+            "name": "windows-debug",
+            "inherits": "base",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_MANIFEST_MODE": "ON",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
-                "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl",
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
             }
         },
         {
-            "name": "default-ninja-debug",
+            "name": "windows-release",
+            "inherits": "base",
             "generator": "Ninja",
-            "binaryDir": "build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl",
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            }
+        },
+        {
+            "name": "unix-clang-debug",
+            "inherits": "base",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_MANIFEST_MODE": "ON",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
-                "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
             }
         },
         {
-            "name": "default",
-            "generator": "Unix Makefiles",
-            "binaryDir": "build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_MANIFEST_MODE": "ON",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
-                "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
-            }
-        },
-        {
-            "name": "default-ninja",
+            "name": "unix-clang-release",
+            "inherits": "base",
             "generator": "Ninja",
-            "binaryDir": "build",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_MANIFEST_MODE": "ON",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg-installed",
-                "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "default",
-            "configurePreset": "default",
+            "name": "windows-debug",
+            "configurePreset": "windows-debug",
             "targets": [
                 "brilliant_chip8_main",
                 "BrilliantChip8Tests"
             ]
         },
         {
-            "name": "default-ninja",
-            "configurePreset": "default-ninja",
+            "name": "windows-release",
+            "configurePreset": "windows-release",
+            "targets": [
+                "brilliant_chip8_main",
+                "BrilliantChip8Tests"
+            ]
+        },
+        {
+            "name": "unix-clang-debug",
+            "configurePreset": "unix-clang-debug",
+            "targets": [
+                "brilliant_chip8_main",
+                "BrilliantChip8Tests"
+            ]
+        },
+        {
+            "name": "unix-clang-release",
+            "configurePreset": "unix-clang-release",
             "targets": [
                 "brilliant_chip8_main",
                 "BrilliantChip8Tests"

@@ -1,19 +1,16 @@
-#ifndef OPCODEEXECUTOR_H
-#define OPCODEEXECUTOR_H
+#pragma once
 
 #include <cstdint>
 // #include "brilliant_chip8/BrilliantChip8.hpp"
 class BrilliantChip8;
 
-class OpCodeExecutor
-{
-
-public:
+class OpCodeExecutor {
+   public:
     OpCodeExecutor(BrilliantChip8 &chipRef);
 
     void execute(uint16_t opcode);
 
-private:
+   private:
     // Chip8 with loaded program
     BrilliantChip8 *chip_ref;
 
@@ -62,5 +59,3 @@ private:
     void OPCODE_FX55_StoreV(uint8_t x);
     void OPCODE_FX65_FillV(uint8_t x);
 };
-
-#endif // OPCODEEXECUTOR_H
