@@ -28,6 +28,8 @@ spdlog::level::level_enum parseLogLevel(const std::string &level) {
 }
 
 int main(int argc, char *argv[]) {
+    init_console();
+
     // Set up CLI options
     cxxopts::Options options("chip8", "A simple CHIP-8 emulator");
     options.add_options()("r,rom", "Path to ROM file",
@@ -61,7 +63,7 @@ int main(int argc, char *argv[]) {
     constexpr ns TICK_NS = ns{16'666'667};  // 1/60 s
     constexpr ns FRAME_NS = TICK_NS;        // same for video
 
-    clock::time_point last = clock::now();
+    clock::time_point last_frame_end = clock::now();
     ns cycle_accumulator = ns::zero();
     ns timer_accumulator = ns::zero();
     ns frame_accumulator = ns::zero();
@@ -77,9 +79,9 @@ int main(int argc, char *argv[]) {
     // Renderer loop
     Renderer renderer;
     while (true) {
-        clock::time_point now = clock::now();
-        ns elapsed = now - last;
-        last = now;
+        clock::time_point frame_start = clock::now();
+        ns elapsed = frame_start - last_frame_end;
+        last_frame_end = frame_start;
 
         cycle_accumulator += elapsed;
         timer_accumulator += elapsed;
@@ -98,6 +100,7 @@ int main(int argc, char *argv[]) {
         while (frame_accumulator >= FRAME_NS) {
             if (chip8.getDrawFlag()) {
                 renderer.render(chip8.getDisplay());
+                std::cout << std::flush;
             } else {
                 spdlog::debug("No draw flag set, skipping render");
             }

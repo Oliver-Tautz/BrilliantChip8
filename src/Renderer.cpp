@@ -14,11 +14,11 @@ Renderer::Renderer() {
 // Render the current display buffer to the output, clearing the console first
 void Renderer::render(const BrilliantChip8::DisplayBuffer &display) {
     // ANSI escapes: clear screen and move cursor to top-left
-    std::cout << "\033[2J\033[H";
-
+    clearScreen();
+    moveCursor(0, 0);
     for (const auto &row : display) {
         for (const auto &pixel : row) {
-            std::cout << (pixel ? "x" : " ");
+            std::cout << (pixel ? "-" : " ");
         }
         std::cout << '\n';
     }
