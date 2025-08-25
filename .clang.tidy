@@ -1,0 +1,8 @@
+Checks: >
+  *,
+  -clang-analyzer-alpha.*,
+  -llvm-header-guard
+
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: none

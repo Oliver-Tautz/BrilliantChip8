@@ -26,6 +26,7 @@ add_library(brilliant_chip8
 )
 
 target_include_directories(brilliant_chip8 PUBLIC include)
+
 target_sources(brilliant_chip8
     PRIVATE
         src/utils.cpp

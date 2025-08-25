@@ -22,6 +22,7 @@ Install
 
 * vcpkg
     * windows: follow https://learn.microsoft.com/en-us/vcpkg/get_started/overview
+    * linux: follow https://lindevs.com/install-vcpkg-on-ubuntu
 * cmake
     * windows: install it systemwide with winget or unzip+add to path
 * ninja
