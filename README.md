@@ -25,10 +25,14 @@ Install
     * linux: follow https://lindevs.com/install-vcpkg-on-ubuntu
 * cmake
     * windows: install it systemwide with winget or unzip+add to path
+    * linux: apt install cmake
 * ninja
     * Windows: winget install Ninja-build.Ninja
+    * linux: apt install ninja-build
 * clang compiler
     * Windows: download, extract and add to path: https://github.com/llvm/llvm-project/releases/tag/llvmorg-18.1.8
+    * linux: sudo apt install clang
+
     
 Set VCPKG_ROOT to the root of your vcpkg install. Its read in CMakePresets.json
 
